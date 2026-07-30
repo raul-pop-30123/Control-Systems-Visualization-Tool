@@ -1,8 +1,6 @@
 #ifndef COMPLEX_NUMBER_HPP
 #define COMPLEX_NUMBER_HPP
 
-using namespace std;
-
 #include <iostream>
 
 class ComplexNumber{
@@ -26,7 +24,7 @@ public:
     ComplexNumber& operator+=(const ComplexNumber& other);
     ComplexNumber& operator-=(const ComplexNumber& other);
 
-friend ostream& operator<<(ostream& os, const ComplexNumber& c);
+friend std::ostream& operator<<(std::ostream& os, const ComplexNumber& c);
 
 };
 

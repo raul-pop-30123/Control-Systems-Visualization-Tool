@@ -3,11 +3,10 @@
 
 #include <iostream>
 #include <stdexcept>
-using namespace std;
 
 class Matrix{
 private:
-    int rown;
+    int rows;
     int cols;
     double** data;
 
@@ -24,6 +23,8 @@ public:
     int getRows() const;
     int getCols() const;
 
+    void resize(int newRows, int newCols, double defaultValue = 0.0);
+
     double& at(int r, int c);
 
     const double& at(int r, int c) const;
@@ -36,6 +37,6 @@ public:
     Matrix transpose() const;
     double determinant() const;
 
-    friend ostream& operator<<(ostream& os, const Matrix& m);
+    friend std::ostream& operator<<(std::ostream& os, const Matrix& m);
 };
 #endif
