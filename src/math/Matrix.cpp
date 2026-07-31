@@ -205,3 +205,53 @@ Matrix Matrix::operator*(double scalar) const {
     return result;
 }
 
+Matrix Matrix::transpose() const{
+    Matrix result(cols,rows);
+
+    for (int i = 0; i < rows; ++i) {
+        for (int j = 0; j < cols; ++j) {
+            result.data[j][i] = data[i][j];
+        }
+    }
+    return result;
+}
+
+double Matrix::determinant() const{
+    if (rows != cols) {
+        throw invalid_argument("Determinant is only defined for square matrices.");
+    }
+    if (rows == 0) return 0.0;          // rank 0
+    if (rows == 1) return data[0][0];   // rank 1
+    if (rows == 2) {                    // rank 2
+        return (data[0][0] * data[1][1]) - (data[0][1] * data[1][0]);
+    }
+                                        //rank >=3
+    double det = 0.0;
+    for (int p = 0; p < cols; ++p) {
+        Matrix subMatrix(rows - 1, cols - 1);
+        for (int i = 1; i < rows; ++i) {
+            int subCol = 0;
+            for (int j = 0; j < cols; ++j) {
+                if (j == p) continue;
+                subMatrix.data[i - 1][subCol] = data[i][j];
+                subCol++;
+            }
+        }
+        double sign = (p % 2 == 0) ? 1.0 : -1.0;
+        det += sign * data[0][p] * subMatrix.determinant();
+    }
+    return det;
+}
+
+ostream& operator<<(ostream& os, const Matrix& m) {
+    for (int i = 0; i < m.rows; ++i) {
+        os << "[ ";
+        for (int j = 0; j < m.cols; ++j) {
+            os << m.data[i][j] << " ";
+        }
+        os << "]\n";
+    }
+    return os;
+}
+
+
