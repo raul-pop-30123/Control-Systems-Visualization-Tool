@@ -49,38 +49,41 @@ void Matrix::freeMemory(){
     cols = 0;
 }
 
-void Matrix::resize(int newRows, int newCols, double defaultValue){
-    if(newRows <=0 || newCols <=0){
+void Matrix::resize(int newRows, int newCols, double defaultValue) {
+    if (newRows <= 0 || newCols <= 0) {
         freeMemory();
         return;
     }
 
-    double** tempRows = (double**)realloc(data,newRows * sizeof(double*));
-    if(tempRows == nullptr){
+    if (newRows < rows) {
+        for (int i = newRows; i < rows; ++i) {
+            if (data != nullptr && data[i] != nullptr) {
+                free(data[i]);
+            }
+        }
+    }
+
+    double** tempRows = (double**)realloc(data, newRows * sizeof(double*));
+    if (tempRows == nullptr) {
         throw bad_alloc();
     }
     data = tempRows;
 
-    if (newRows < rows){
-        for (int i = newRows; i < rows; ++i) {
-            free(data[i]);
-        }
-    } else if (newRows > rows){
-        // Allocate space for new rows
+    if (newRows > rows) {
         for (int i = rows; i < newRows; ++i) {
             data[i] = (double*)malloc(newCols * sizeof(double));
-            if(data[i] == nullptr) throw bad_alloc();
-            for(int j = 0 ; j < newCols ; j++) data[i][j] = defaultValue;
+            if (data[i] == nullptr) throw bad_alloc();
+            for (int j = 0; j < newCols; ++j) {
+                data[i][j] = defaultValue;
+            }
         }
     }
-    // If newCols is greater than cols, then
-    // we need to modify the existing rows
 
-    int rowsToResize = newRows < rows ? newRows : rows ; 
-    for(int i = 0 ; i < rowsToResize ; i++){
-        double* tempCols = (double*)realloc(data[i],newCols * sizeof(double));  //create a new pointer with desired length
-        if(tempCols == nullptr) throw bad_alloc();
-        data[i] = tempCols; // point towards new vector with required length;
+    int existingRowsToResize = (newRows < rows) ? newRows : rows;
+    for (int i = 0; i < existingRowsToResize; ++i) {
+        double* tempCols = (double*)realloc(data[i], newCols * sizeof(double));
+        if (tempCols == nullptr) throw bad_alloc();
+        data[i] = tempCols;
 
         for (int j = cols; j < newCols; ++j) {
             data[i][j] = defaultValue;
@@ -105,6 +108,8 @@ Matrix::Matrix(int r, int c, double initialValue) : rows(r), cols(c) {
     }
 }
 
+Matrix::Matrix() : rows(0), cols(0), data(nullptr) {}
+
 Matrix::~Matrix() {freeMemory();}
 
 Matrix::Matrix(const Matrix& other) : rows(other.rows), cols(other.cols){
@@ -123,6 +128,8 @@ Matrix& Matrix::operator=(const Matrix& other){
     freeMemory();
     rows = other.rows;
     cols = other.cols;
+
+    allocateMemory();
 
     for(int i = 0 ; i< rows ; i++){
         for(int j = 0 ; j < cols ; j++){
@@ -253,5 +260,3 @@ ostream& operator<<(ostream& os, const Matrix& m) {
     }
     return os;
 }
-
-
