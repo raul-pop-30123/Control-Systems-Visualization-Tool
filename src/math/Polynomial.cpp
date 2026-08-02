@@ -3,6 +3,7 @@
 #include <algorithm>
 
 using namespace std;
+#define M_PI 3.14159
 
 Polynomial::Polynomial() : coeffs{0.0} {}
 
@@ -36,7 +37,8 @@ vector<double> Polynomial::coefficientsDescending() const {
 
 
 // s^3 + 2s^2 + 6s + 3 = s^2 * ( s + 2) + 6s + 3 = 
-// s * (s *(s + 2) + 6 ) + 3    =>  s * last_result + Coefficient_descending_order
+// s * (s (*(s + 2) + 6 ) + 3    =>  s * last_result + Coefficient_descending_order
+// a0 + s * (a1 + s * (a2 + s * (...)))
 ComplexNumber Polynomial::evaluate(const ComplexNumber& s) const {
     ComplexNumber result(0.0, 0.0);
     for(int i = degree(); i >= 0; i--){
@@ -56,7 +58,7 @@ Polynomial Polynomial::operator+(const Polynomial& other) const {
 Polynomial Polynomial::operator-(const Polynomial& other) const {
     size_t n = max(coeffs.size(), other.coeffs.size());
     vector<double> result(n, 0.0);
-    for(size_t i = 0; i < coeffs.size(); i++) result[i] += coeffs[i];
+    for(size_t i = 0; i < coeffs.size(); i++) result[i] = coeffs[i];
     for(size_t i = 0; i < other.coeffs.size(); i++) result[i] -= other.coeffs[i];
     return Polynomial(result);
 }
@@ -73,9 +75,45 @@ Polynomial Polynomial::operator*(const Polynomial& other) const {
     for(size_t i = 0; i < coeffs.size(); i++){
         for(size_t j = 0; j < other.coeffs.size(); j++){
             result[i + j] += coeffs[i] * other.coeffs[j];
+        }
     }
-}
-return Polynomial(result);
+    return Polynomial(result);
 }
 
+vector<ComplexNumber> Polynomial::roots(int maxIterations, double tol) const {
+    int n = degree();
+    if(n < 1) return {};
+    if(n == 1) return { ComplexNumber(-coeffs[0] / coeffs[1], 0.0) };
+
+    // Cauchy's bound gives a radius guaranteed to contain every root; the
+    // 0.4 rad angular offset keeps the n starting points from landing in a
+    // symmetric pattern that stalls convergence for polynomials with real
+    // roots only (e.g. it lets us land on a genuinely complex pair for
+    // s^2+1 instead of getting stuck straddling the real axis).
+    double leading = fabs(coeffs[n]);
+    double maxOther = 0.0;
+    for(int i = 0; i < n; i++) maxOther = max(maxOther, fabs(coeffs[i]));
+    double radius = 1.0 + maxOther / leading;
+
+    vector<ComplexNumber> z(n);
+    for(int i = 0; i < n; i++){
+        double angle = 2.0 * M_PI * i / n + 0.4;
+        z[i] = ComplexNumber(radius * cos(angle), radius * sin(angle));
+    }
+
+    for(int iter = 0; iter < maxIterations; iter++){
+        double maxChange = 0.0;
+        for(int i = 0; i < n; i++){
+            ComplexNumber denom(coeffs[n], 0.0);
+            for(int j = 0; j < n; j++){
+                if(j != i) denom = denom * (z[i] - z[j]);
+            }
+            ComplexNumber newZ = z[i] - evaluate(z[i]) / denom;
+            maxChange = max(maxChange, (newZ - z[i]).magnitude());
+            z[i] = newZ;
+        }
+        if(maxChange < tol) break;
+    }
+    return z;
+}
 
