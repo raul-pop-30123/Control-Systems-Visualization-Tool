@@ -28,6 +28,7 @@ public:
     ComplexNumber evaluate(const ComplexNumber& s) const;
     
     Polynomial operator+(const Polynomial& other) const;
+    Polynomial operator-(const Polynomial& other) const;
     Polynomial operator*(double scalar) const;
     Polynomial operator*(const Polynomial& other) const;
 
