@@ -80,16 +80,17 @@ Polynomial Polynomial::operator*(const Polynomial& other) const {
     return Polynomial(result);
 }
 
+
+// Cauchy's bound gives a radius guaranteed to contain every root; the
+// 0.4 rad angular offset keeps the n starting points from landing in a
+// symmetric pattern that stalls convergence for polynomials with real
+// roots only (e.g. it lets us land on a genuinely complex pair for
+// s^2+1 instead of getting stuck straddling the real axis).
 vector<ComplexNumber> Polynomial::roots(int maxIterations, double tol) const {
     int n = degree();
     if(n < 1) return {};
     if(n == 1) return { ComplexNumber(-coeffs[0] / coeffs[1], 0.0) };
 
-    // Cauchy's bound gives a radius guaranteed to contain every root; the
-    // 0.4 rad angular offset keeps the n starting points from landing in a
-    // symmetric pattern that stalls convergence for polynomials with real
-    // roots only (e.g. it lets us land on a genuinely complex pair for
-    // s^2+1 instead of getting stuck straddling the real axis).
     double leading = fabs(coeffs[n]);
     double maxOther = 0.0;
     for(int i = 0; i < n; i++) maxOther = max(maxOther, fabs(coeffs[i]));
