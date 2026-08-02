@@ -1,4 +1,4 @@
-#include "ComplexNumber.hpp"
+#include "math/ComplexNumber.hpp"
 #include <cmath>
 #include <stdexcept>
 
