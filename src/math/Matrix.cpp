@@ -223,6 +223,22 @@ Matrix Matrix::transpose() const{
     return result;
 }
 
+
+/*
+A = a b c d e
+    f g h i j
+    k l m n o
+    p q r s t
+    u v w x y
+
+det A = (-1)^(1+1)*a*det M1 + (-1)^(1+2)*b*det M2 + ...
+
+    M1= g h i j             M2= f h i j         ...
+        l m n o                 k m n o         ...
+        q r s t                 p r s t         ...
+        v w x y                 u w x y         ...
+
+*/
 double Matrix::determinant() const{
     if (rows != cols) {
         throw invalid_argument("Determinant is only defined for square matrices.");
