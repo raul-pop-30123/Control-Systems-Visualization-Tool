@@ -20,3 +20,10 @@ vector<ComplexNumber> TransferFunction::zeros() const {
 const Polynomial& TransferFunction::numerator() const   { return beta;  }
 const Polynomial& TransferFunction::denominator() const { return alpha; }
 
+Polynomial TransferFunction::closedLoopCharacteristicPolynomial(double k) const {
+    return alpha + beta * k;
+}
+
+vector<ComplexNumber> TransferFunction::closedLoopPoles(double k) const {
+    return closedLoopCharacteristicPolynomial(k).roots();
+}
