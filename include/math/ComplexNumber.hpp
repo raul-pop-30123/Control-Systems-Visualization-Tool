@@ -12,6 +12,9 @@ public:
     ComplexNumber();
     ComplexNumber(double r, double i=0.0);
 
+    double getReal() const;
+    double getImag() const;
+
     double magnitude() const;
     double phase() const;       //Radian
     ComplexNumber conjugate() const;

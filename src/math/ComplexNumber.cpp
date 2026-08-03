@@ -19,6 +19,9 @@ ComplexNumber ComplexNumber::conjugate() const {
     return ComplexNumber(real, -imaginary);
 }
 
+double ComplexNumber::getReal() const { return real; }
+double ComplexNumber::getImag() const { return imaginary; }
+
 ComplexNumber ComplexNumber::operator+(const ComplexNumber& other) const {
     return ComplexNumber(
         real + other.real,
