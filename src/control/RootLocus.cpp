@@ -2,7 +2,7 @@
 #include "control/Stability.hpp"
 #include <cmath>
 
-#define M_PI 3.14159
+#define M_PI 3.14159265358979323846
 
 using namespace std;
 
@@ -26,7 +26,7 @@ double RootLocus::asymptoteCentroid() const {
     vector<ComplexNumber> zeros = plant.zeros();
     int n = static_cast<int>(poles.size());
     int m = static_cast<int>(zeros.size());
-    if(n == m) return 0.0;
+    if(n <= m) return 0.0;
 
     double sumPoles = 0.0, sumZeros = 0.0;
     for(auto& p : poles) sumPoles += p.getReal();
