@@ -25,6 +25,8 @@ public:
 
     void resize(int newRows, int newCols, double defaultValue = 0.0);
 
+    static Matrix identity(int n) ;
+
     double& at(int r, int c);
 
     const double& at(int r, int c) const;
@@ -38,5 +40,7 @@ public:
     double determinant() const;
 
     friend std::ostream& operator<<(std::ostream& os, const Matrix& m);
+
+    double trace() const;
 };
 #endif

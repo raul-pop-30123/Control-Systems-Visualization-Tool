@@ -144,6 +144,12 @@ int Matrix::getRows() const { return rows; }
 
 int Matrix::getCols() const { return cols; }
 
+Matrix Matrix::identity(int n) {
+    Matrix result(n, n, 0.0);
+    for(int i = 0; i < n; i++) result.data[i][i] = 1.0;
+    return result;
+}
+
 double& Matrix::at(int r, int c){
     if(r < 0 || r >= rows || c < 0 || c >= cols){
         throw out_of_range("Matrix index out of bounds!");
@@ -275,4 +281,14 @@ ostream& operator<<(ostream& os, const Matrix& m) {
         os << "]\n";
     }
     return os;
+}
+
+
+double Matrix::trace() const {
+    if(rows != cols){
+        throw invalid_argument("Trace requires a square matrix");
+    }
+    double t = 0.0;
+    for(int i = 0; i < rows; i++) t += data[i][i];
+    return t;
 }
